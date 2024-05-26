@@ -18,23 +18,6 @@ public:
     {
         while (m_running)
         {
-            // {
-            //     std::unique_lock shutdown_lock(m_signal_channel->m_cv_mutex);
-            //     m_signal_channel->m_cv.wait_for(shutdown_lock, std::chrono::milliseconds(10), [this]()
-            //                                     {
-            //                                         bool should_shutdown = m_signal_channel->m_shutdown_requested.load();
-            //                                         return should_shutdown; });
-
-            //     if (m_signal_channel->m_shutdown_requested)
-            //     {
-            //         break;
-            //     }
-            // }
-
-            // if (m_signal_channel->m_shutdown_requested)
-            // {
-            //     break;
-            // }
             if (m_queue.size())
             {
                 auto next = m_queue.getNextToRead();

@@ -25,6 +25,12 @@ add_subdirectory(Common)
 target_link_libraries(${PROJECT_NAME} PUBLIC Common)
 
 #########################################################
+# Logging
+#########################################################
+add_subdirectory(Logging)
+target_link_libraries(${PROJECT_NAME} PUBLIC Logging)
+
+#########################################################
 # PythonFunctions
 #########################################################
 add_subdirectory(PythonFunctions)
