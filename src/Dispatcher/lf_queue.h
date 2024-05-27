@@ -12,20 +12,20 @@ public:
     {
     }
 
-    auto getNextToWriteTo() noexcept
+    auto GetNextToWriteTo() noexcept
     {
         return &m_store[m_next_write_index];
     }
 
-    auto updateWriteIndex() noexcept
+    auto UpdateWriteIndex() noexcept
     {
         m_next_write_index = (m_next_write_index + 1) % m_store.size();
         m_num_elements++;
     }
 
-    auto getNextToRead() const noexcept -> const T *
+    auto GetNextToRead() const noexcept -> const T *
     {
-        return (size() ? &m_store[m_next_read_index] : nullptr);
+        return (Size() ? &m_store[m_next_read_index] : nullptr);
     }
 
     auto updateReadIndex() noexcept
@@ -34,7 +34,7 @@ public:
         m_num_elements--;
     }
 
-    auto size() const noexcept
+    auto Size() const noexcept
     {
         return m_num_elements.load();
     }

@@ -11,7 +11,7 @@ set(CMAKE_BUILD_TYPE debug)
 # Configure a header file to pass some of 
 # the CMake settings to the source code
 #########################################################
-configure_file(${PROJECT_NAME}Config.in ${PROJECT_NAME}Config.h)
+configure_file(config.in config.h)
 
 #########################################################
 # Main Executable
@@ -38,6 +38,12 @@ target_link_libraries(${PROJECT_NAME} PUBLIC Logging)
 #########################################################
 add_subdirectory(PythonFunctions)
 target_link_libraries(${PROJECT_NAME} PUBLIC PythonFunctions)
+
+#########################################################
+# Strategies
+#########################################################
+add_subdirectory(Strategies)
+target_link_libraries(${PROJECT_NAME} PUBLIC Strategies)
 
 #########################################################
 # Dispatcher

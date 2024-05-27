@@ -23,7 +23,6 @@
 #include <spdlog/spdlog.h>
 
 #include "safe_queue.h"
-#include "../Common/signal_channel.h"
 
 extern SafeQueue<std::string> log_queue;
 
@@ -281,10 +280,9 @@ namespace Logging
         std::atomic<bool> m_running = {true};
         std::thread *m_thread = nullptr;
         std::string m_name;
-        std::shared_ptr<SignalChannel> m_signal_channel;
 
     public:
-        LogProcessor();
+        LogProcessor(const std::string &name);
         ~LogProcessor();
         void FlushQueue() noexcept;
     };

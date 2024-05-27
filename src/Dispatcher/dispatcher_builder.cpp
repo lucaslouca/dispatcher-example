@@ -1,21 +1,21 @@
 #include "dispatcher_builder.h"
 #include "dispatcher.h"
 
-DispatcherBuilder::DispatcherBuilder(std::string name) : m_name(name) {}
+DispatcherBuilder::DispatcherBuilder() {}
 
-DispatcherBuilder &DispatcherBuilder::WithSignalChannel(std::shared_ptr<SignalChannel> sc)
+DispatcherBuilder &DispatcherBuilder::WithName(const std::string &name)
 {
-    m_sig_channel = sc;
+    m_name = name;
     return *this;
 }
 
 std::unique_ptr<Dispatcher> DispatcherBuilder::Build() const
 {
-    if (!m_sig_channel)
+    if (m_name.empty())
     {
-        throw std::runtime_error("No signal channel provided");
+        throw std::runtime_error("No name provided");
     }
 
-    std::unique_ptr<Dispatcher> instance = std::make_unique<Dispatcher>(m_name, m_sig_channel);
+    std::unique_ptr<Dispatcher> instance = std::make_unique<Dispatcher>(m_name);
     return instance;
 }

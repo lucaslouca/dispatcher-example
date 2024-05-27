@@ -7,12 +7,11 @@
 class DispatcherBuilder
 {
 private:
-    std::shared_ptr<SignalChannel> m_sig_channel;
     std::string m_name;
 
 public:
-    DispatcherBuilder(std::string name);
-    DispatcherBuilder &WithSignalChannel(std::shared_ptr<SignalChannel> sc);
+    DispatcherBuilder();
+    DispatcherBuilder &WithName(const std::string &name);
     std::unique_ptr<Dispatcher> Build() const;
 };
 

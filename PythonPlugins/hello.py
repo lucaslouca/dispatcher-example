@@ -1,7 +1,5 @@
-from typing import List
+from typing import Dict
 
-def hello_world(text: str, names: List[str]) -> str:
-    names_joined = ",".join(names)
-    message = f"{text} {names_joined}!"
-    print(f"In Python: {message}")
-    return message+"done"
+def hello_world(text: str, parameters: Dict[str, str]) -> str:
+    print(f"In Python: {parameters}")
+    return "ok"

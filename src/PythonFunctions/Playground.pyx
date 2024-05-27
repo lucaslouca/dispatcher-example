@@ -6,6 +6,6 @@ sys.path.append(f"{dir_path}/PythonPlugins") # Update list of directories that t
 
 from hello import hello_world
 
-cdef public char* call_hello_world(char* message, list names):
-    res = hello_world(message.decode('UTF-8'), names)
+cdef public char* call_hello_world(char* message, dict parameters):
+    res = hello_world(message.decode('UTF-8'), parameters)
     return res.encode('UTF-8')

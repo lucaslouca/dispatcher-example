@@ -6,8 +6,8 @@
 #include <utility>
 #include "lf_queue.h"
 #include "../Common/thread_utils.h"
-#include "../Common/signal_channel.h"
 #include "../Logging/logging.h"
+#include "../Strategies/strategy_factory.h"
 
 constexpr size_t DISPATCHER_QUEUE_SIZE = 8 * 1024 * 1024;
 
@@ -19,23 +19,28 @@ public:
     {
         while (m_running)
         {
-            if (m_queue.size())
+            if (m_queue.Size())
             {
-                auto next = m_queue.getNextToRead();
+                auto next = m_queue.GetNextToRead();
                 m_queue.updateReadIndex();
 
                 auto query_name = std::get<0>(*next);
-                Logging::INFO(query_name, "Dispatcher");
+                auto parameters = std::get<1>(*next);
+
+                Logging::INFO("Dispatching " + query_name, "Dispatcher");
+
+                std::unique_ptr<Strategy> strategy = StrategyFactory::GetInstance("python");
+                strategy->Run(query_name, parameters);
             }
 
             using namespace std::literals::chrono_literals;
             std::this_thread::sleep_for(10ms);
         }
 
-        std::cout << "Dispatcher break" << std::endl;
+        std::cout << "Dispatcher beak" << std::endl;
     }
 
-    Dispatcher(const std::string name, std::shared_ptr<SignalChannel> signal_channel) : m_name(name), m_signal_channel(signal_channel), m_queue(DISPATCHER_QUEUE_SIZE)
+    Dispatcher(const std::string name) : m_name(name), m_queue(DISPATCHER_QUEUE_SIZE)
     {
         m_thread = CreateAndStartThread(-1, "Dispatcher", [this]()
                                         { FlushQueue(); });
@@ -43,8 +48,8 @@ public:
 
     ~Dispatcher()
     {
-        std::cout << "Dispatcher shutting down" << std::endl;
-        while (m_queue.size())
+        Logging::INFO("Shutting down", "Dispatcher");
+        while (m_queue.Size())
         {
             using namespace std::literals::chrono_literals;
             std::this_thread::sleep_for(1s);
@@ -55,8 +60,8 @@ public:
 
     auto Dispatch(const std::string &name, const std::unordered_map<std::string, std::string> &params) noexcept
     {
-        *(m_queue.getNextToWriteTo()) = std::make_pair(name, params);
-        m_queue.updateWriteIndex();
+        *(m_queue.GetNextToWriteTo()) = std::make_pair(name, params);
+        m_queue.UpdateWriteIndex();
     }
 
     Dispatcher() = delete;
@@ -70,5 +75,4 @@ private:
     std::atomic<bool> m_running = {true};
     std::thread *m_thread = nullptr;
     std::string m_name;
-    std::shared_ptr<SignalChannel> m_signal_channel;
 };

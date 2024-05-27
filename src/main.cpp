@@ -7,10 +7,11 @@
 #if __APPLE__
 #include <sys/event.h> // for kqueue() etc.
 #endif
-#include "MyAppConfig.h"
+#include "config.h"
 #include "Playground.h"
 #include "Dispatcher/dispatcher.h"
 #include "Dispatcher/dispatcher_builder.h"
+#include "Strategies/python_strategy.cpp"
 #include "Common/signal_channel.h"
 #include "Logging/logging.h"
 
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
      * LOGGER
      *
      *************************************************************************/
-    Logging::LogProcessor log_processor;
+    Logging::LogProcessor log_processor("Logger");
 
     PyImport_AppendInittab("Playground", PyInit_Playground);
     Py_Initialize();
@@ -130,10 +131,10 @@ int main(int argc, char *argv[])
     }
 
     char *pResult = call_hello_world("Hello", pNames);
-    std::cout << "Result from Python call: " << pResult << std::endl;
+    Logging::INFO("Result from Python call: " + std::string(pResult), "Main");
     Py_Finalize();
 
-    std::unique_ptr<Dispatcher> dispatcher = DispatcherBuilder("Dispatcher").WithSignalChannel(signal_channel).Build();
+    std::unique_ptr<Dispatcher> dispatcher = DispatcherBuilder().WithName("Dispatcher").Build();
 
     while (true)
     {
@@ -143,7 +144,7 @@ int main(int argc, char *argv[])
         using namespace std::literals::chrono_literals;
         std::this_thread::sleep_for(1s);
 
-        if (signal_channel->m_shutdown_requested)
+        if (signal_channel->m_shutdown_requested.load())
         {
             break;
         }
