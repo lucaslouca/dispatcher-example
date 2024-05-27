@@ -8,6 +8,5 @@ add_library(Logging
     "safe_queue.h"
     )
 
-
 find_package(spdlog REQUIRED)
 target_link_libraries(Logging LINK_PUBLIC spdlog::spdlog) 

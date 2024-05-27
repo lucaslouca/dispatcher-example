@@ -6,5 +6,4 @@ add_library(Dispatcher
     "tasks_queue.h"
     "thread_pool.h"
     "thread_pool.cpp"
-    "thread_utils.h"
     )

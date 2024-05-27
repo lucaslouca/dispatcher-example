@@ -15,7 +15,7 @@ public:
   ~SafeQueue(void) {}
 
   // Add an element to the queue.
-  void enqueue(T t)
+  void Enqueue(T t)
   {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_queue.push(t);
@@ -24,7 +24,7 @@ public:
 
   // Get the "front"-element.
   // If the queue is empty, wait till a element is avaiable.
-  T dequeue(void)
+  T Dequeue(void)
   {
     std::unique_lock<std::mutex> lock(m_mutex);
     while (m_queue.empty())
@@ -37,7 +37,7 @@ public:
     return val;
   }
 
-  void dequeue_with_timeout(const int ms, T &val)
+  void DequeueWithTimeout(const int ms, T &val)
   {
     std::unique_lock<std::mutex> lock(m_mutex);
     m_cv.wait_for(lock, std::chrono::milliseconds(ms), [this]()
@@ -52,7 +52,7 @@ public:
     }
   }
 
-  size_t size()
+  size_t Size()
   {
     std::unique_lock<std::mutex> lock(m_mutex);
     return m_queue.size();

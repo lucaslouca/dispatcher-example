@@ -6,7 +6,6 @@
 #define LOGGING_H
 #define LOGGING_LEVEL_INFO
 
-#include "safe_queue.h"
 #include <string>
 #include <stdexcept>
 #include <iostream>
@@ -22,6 +21,9 @@
 #include <thread>
 #include <atomic>
 #include <spdlog/spdlog.h>
+
+#include "safe_queue.h"
+#include "../Common/signal_channel.h"
 
 extern SafeQueue<std::string> log_queue;
 
@@ -229,7 +231,7 @@ namespace Logging
             return;
         }
 
-        log_queue.enqueue(create_log(message, Level::TRACE, name));
+        log_queue.Enqueue(create_log(message, Level::TRACE, name));
     }
 
     inline void DEBUG(const std::string &message, const std::string &name = "")
@@ -239,7 +241,7 @@ namespace Logging
             return;
         }
 
-        log_queue.enqueue(create_log(message, Level::DEBUG, name));
+        log_queue.Enqueue(create_log(message, Level::DEBUG, name));
     }
 
     inline void INFO(const std::string &message, const std::string &name = "")
@@ -250,7 +252,7 @@ namespace Logging
             return;
         }
 
-        log_queue.enqueue(create_log(message, Level::INFO, name));
+        log_queue.Enqueue(create_log(message, Level::INFO, name));
     }
 
     inline void WARN(const std::string &message, const std::string &name = "")
@@ -260,13 +262,13 @@ namespace Logging
             return;
         }
 
-        log_queue.enqueue(create_log(message, Level::WARN, name));
+        log_queue.Enqueue(create_log(message, Level::WARN, name));
     }
 
     // TODO: Give LogProccessor priority on ERROR so that we don't miss any errors
     inline void ERROR(const std::string &message, const std::string &name = "")
     {
-        log_queue.enqueue(create_log(message, Level::ERROR, name));
+        log_queue.Enqueue(create_log(message, Level::ERROR, name));
     }
 
     /**
@@ -276,19 +278,15 @@ namespace Logging
     class LogProcessor
     {
     private:
-        bool m_should_run;
-        std::unique_ptr<std::thread> m_t;
-        std::atomic<size_t> *m_active_processors;
-        std::condition_variable *m_log_cv;
-        std::mutex *m_log_cv_mutex;
-        void run();
+        std::atomic<bool> m_running = {true};
+        std::thread *m_thread = nullptr;
+        std::string m_name;
+        std::shared_ptr<SignalChannel> m_signal_channel;
 
     public:
-        LogProcessor(std::atomic<size_t> *active_processors, std::condition_variable *log_cv, std::mutex *log_cv_mutex);
+        LogProcessor();
         ~LogProcessor();
-        bool start();
-        void join() const;
-        void stop();
+        void FlushQueue() noexcept;
     };
 
 } // end namespace

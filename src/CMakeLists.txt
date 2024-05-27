@@ -18,6 +18,9 @@ configure_file(${PROJECT_NAME}Config.in ${PROJECT_NAME}Config.h)
 #########################################################
 add_executable(${PROJECT_NAME} "main.cpp")
 
+include_directories(/usr/local/include)
+include_directories(/opt/homebrew/include)
+
 #########################################################
 # Common
 #########################################################

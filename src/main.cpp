@@ -12,6 +12,7 @@
 #include "Dispatcher/dispatcher.h"
 #include "Dispatcher/dispatcher_builder.h"
 #include "Common/signal_channel.h"
+#include "Logging/logging.h"
 
 /**
  * Create a return a shared channel for SIGINT signals.
@@ -106,6 +107,13 @@ int main(int argc, char *argv[])
     sigset_t sigset;
     std::shared_ptr<SignalChannel> signal_channel = listen_for_sigint(sigset);
 
+    /*************************************************************************
+     *
+     * LOGGER
+     *
+     *************************************************************************/
+    Logging::LogProcessor log_processor;
+
     PyImport_AppendInittab("Playground", PyInit_Playground);
     Py_Initialize();
     PyImport_ImportModule("Playground");
@@ -141,7 +149,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    std::cout << "Main stoping" << std::endl;
+    Logging::INFO("Stopping", "Main");
 
     return 0;
 }

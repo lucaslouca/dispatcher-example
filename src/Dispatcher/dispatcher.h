@@ -4,9 +4,10 @@
 #include <fstream>
 #include <cstdio>
 #include <utility>
-#include "thread_utils.h"
 #include "lf_queue.h"
+#include "../Common/thread_utils.h"
 #include "../Common/signal_channel.h"
+#include "../Logging/logging.h"
 
 constexpr size_t DISPATCHER_QUEUE_SIZE = 8 * 1024 * 1024;
 
@@ -24,7 +25,7 @@ public:
                 m_queue.updateReadIndex();
 
                 auto query_name = std::get<0>(*next);
-                std::cout << query_name << std::endl;
+                Logging::INFO(query_name, "Dispatcher");
             }
 
             using namespace std::literals::chrono_literals;
