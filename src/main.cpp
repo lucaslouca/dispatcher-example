@@ -1,6 +1,5 @@
 
 #include <iostream>
-#include <Python.h>
 #include <string>
 #include <unordered_map>
 #include <signal.h>
@@ -8,7 +7,6 @@
 #include <sys/event.h> // for kqueue() etc.
 #endif
 #include "config.h"
-#include "Playground.h"
 #include "Dispatcher/dispatcher.h"
 #include "Dispatcher/dispatcher_builder.h"
 #include "Strategies/python_strategy.cpp"
@@ -114,25 +112,6 @@ int main(int argc, char *argv[])
      *
      *************************************************************************/
     Logging::LogProcessor log_processor("Logger");
-
-    PyImport_AppendInittab("Playground", PyInit_Playground);
-    Py_Initialize();
-    PyImport_ImportModule("Playground");
-
-    PyObject *pNames;
-    if (!(pNames = PyList_New(0)))
-    {
-        return 1;
-    }
-    for (int i = 1; i <= 3; i++)
-    {
-        std::string n = "Name_" + std::to_string(i);
-        PyList_Append(pNames, PyUnicode_FromString(n.c_str()));
-    }
-
-    char *pResult = call_hello_world("Hello", pNames);
-    Logging::INFO("Result from Python call: " + std::string(pResult), "Main");
-    Py_Finalize();
 
     std::unique_ptr<Dispatcher> dispatcher = DispatcherBuilder().WithName("Dispatcher").Build();
 

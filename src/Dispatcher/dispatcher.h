@@ -4,7 +4,9 @@
 #include <fstream>
 #include <cstdio>
 #include <utility>
+#include <Python.h>
 #include "lf_queue.h"
+#include "Playground.h"
 #include "../Common/thread_utils.h"
 #include "../Logging/logging.h"
 #include "../Strategies/strategy_factory.h"
@@ -17,6 +19,10 @@ class Dispatcher final
 public:
     void FlushQueue() noexcept
     {
+        PyImport_AppendInittab("Playground", PyInit_Playground);
+        Py_Initialize();
+        PyImport_ImportModule("Playground");
+
         while (m_running)
         {
             if (m_queue.Size())
@@ -36,6 +42,8 @@ public:
             using namespace std::literals::chrono_literals;
             std::this_thread::sleep_for(10ms);
         }
+
+        Py_Finalize();
 
         std::cout << "Dispatcher beak" << std::endl;
     }

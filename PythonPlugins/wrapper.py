@@ -1,5 +1,5 @@
 from typing import Dict
 
-def hello_world(text: str, parameters: Dict[str, str]) -> str:
+def run_query(query_name: str, parameters: Dict[str, str]) -> str:
     print(f"In Python: {parameters}")
     return "ok"
