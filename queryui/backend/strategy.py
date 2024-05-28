@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint
+from flask import request, jsonify, send_file, Blueprint, make_response
 from models import Edge
 
 strategy_api = Blueprint('strategy_api', __name__)
@@ -8,7 +8,69 @@ strategy_api = Blueprint('strategy_api', __name__)
 ############################################################################################
 
 
-@strategy_api.route('/strategy/<from_id>', methods=['GET'])
+@strategy_api.route('/strategy', methods=['GET'])
+def get_all_strategies():
+    strategies = []
+    strategies.append({
+        'name': 'Agent',
+        'description': 'Lorem Ipsum Dolor. Lorem Ipsum Dolor.',
+        'icon': 'user-secret',
+        'parameters': ['username']
+    })
+    strategies.append({
+        'name': 'User',
+        'description': 'Lorem Ipsum Dolor.',
+        'icon': 'ship',
+        'parameters': ['username', 'location']
+    })
+    strategies.append({
+        'name': 'Geofencing',
+        'description': 'Lorem Ipsum Dolor.',
+        'icon': 'earth',
+        'parameters': ['latitude', 'longitude', 'radius']
+    })
+    strategies.append({
+        'name': 'Search',
+        'description': 'Lorem Ipsum Dolor.',
+        'icon': 'eye',
+        'parameters': ['username']
+    })
+    strategies.append({
+        'name': 'Cycle',
+        'description': 'Lorem Ipsum Dolor.',
+        'icon': 'bullseye',
+        'parameters': ['username']
+    })
+    strategies.append({
+        'name': 'Globe Search',
+        'description': 'Lorem Ipsum Dolor.',
+        'icon': 'route',
+        'parameters': ['username']
+    })
+    strategies.append({
+        'name': 'Locate',
+        'description': 'Lorem Ipsum Dolor.',
+        'icon': 'map',
+        'parameters': ['username']
+    })
+    strategies.append({
+        'name': 'Shoot',
+        'description': 'Lorem Ipsum Dolor.',
+        'icon': 'crosshairs',
+        'parameters': ['username']
+    })
+
+    return jsonify({'result': strategies})
+
+
+@strategy_api.route('/strategy', methods=['POST'])
+def run_strategy():
+    data = request.get_json()
+    print(data)
+    return make_response(jsonify({'success': 'strategy submitted'}),  200)
+
+
+@ strategy_api.route('/strategy/<from_id>', methods=['GET'])
 def get_strategy(from_id):
     nodes = {}
     edges = {}

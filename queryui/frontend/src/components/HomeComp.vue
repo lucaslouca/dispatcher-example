@@ -30,66 +30,22 @@ const strategies: Array<any> = reactive([] as Array<any>)
 const selectedStrategy = ref(null)
 
 onMounted(() => {
-  initStrategies()
+  getStrategies()
 })
 
-function GETStrategies() {
+function getStrategies() {
   API.getEndpoints('strategy')!.get('getAll')!({}).then(function (response: any) {
     console.log('Get all strategies response', response)
-    response.data.forEach((base64: { clientId: string; data: string }) => {
-      strategies.push(base64.data)
-    })
-  })
-}
-
-async function initStrategies(): Promise<void> {
-  strategies.push({
-    name: 'Agent',
-    description: 'Lorem Ipsum Dolor. Lorem Ipsum Dolor.',
-    icon: 'user-secret',
-    parameters: ['username']
-  })
-  strategies.push({
-    name: 'User',
-    description: 'Lorem Ipsum Dolor.',
-    icon: 'user',
-    parameters: ['username', 'location']
-  })
-  strategies.push({
-    name: 'Geofencing',
-    description: 'Lorem Ipsum Dolor.',
-    icon: 'earth',
-    parameters: ['latitude', 'longitude', 'radius']
-  })
-  strategies.push({
-    name: 'Search',
-    description: 'Lorem Ipsum Dolor.',
-    icon: 'search',
-    parameters: ['username']
-  })
-  strategies.push({
-    name: 'Cycle',
-    description: 'Lorem Ipsum Dolor.',
-    icon: 'bicycle',
-    parameters: ['username']
-  })
-  strategies.push({
-    name: 'Globe Search',
-    description: 'Lorem Ipsum Dolor.',
-    icon: 'globe',
-    parameters: ['username']
-  })
-  strategies.push({
-    name: 'Locate',
-    description: 'Lorem Ipsum Dolor.',
-    icon: 'map',
-    parameters: ['username']
-  })
-  strategies.push({
-    name: 'Shoot',
-    description: 'Lorem Ipsum Dolor.',
-    icon: 'gun',
-    parameters: ['username']
+    response.data.result.forEach(
+      (strategy: {
+        name: string
+        description: string
+        icon: string
+        parameters: Array<string>
+      }) => {
+        strategies.push(strategy)
+      }
+    )
   })
 }
 
@@ -159,13 +115,13 @@ function selectStrategy(strategy: any) {
 
 h2 {
   font-family: 'Lato', sans-serif;
-  letter-spacing: 1px;
-  font-weight: bold;
   background-image: linear-gradient(to right, #feac5e, #c779d0, #4bc0c8);
   -webkit-background-clip: text;
   -moz-background-clip: text;
   background-clip: text;
   color: transparent;
+  letter-spacing: 1px;
+  font-weight: bold;
   padding: 5px;
   clip-path: inset(2px);
   font-size: 3rem;

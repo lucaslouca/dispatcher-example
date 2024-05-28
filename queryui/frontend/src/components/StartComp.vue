@@ -1,34 +1,37 @@
 <template>
   <div class="container">
-    <h2>{{ strategy.name }}</h2>
-    <div class="query-box">
-      <span
-        v-for="(parameter, index) in strategy.parameters"
-        v-bind:key="`row-${index}`"
-        class="row"
-      >
-        <label :for="`input-${parameter}`">{{ parameter }}</label>
-        <input
-          type="text"
-          :id="`input-${parameter}`"
-          class="input-field"
-          v-model="parameters.SearchFor[parameter]"
-          @change="updateUsername"
-        />
-      </span>
+    <template v-if="strat">
+      <h2>{{ strategy.name }}</h2>
+      <div class="query-box">
+        <span
+          v-for="(parameter, index) in strategy.parameters"
+          v-bind:key="`row-${index}`"
+          class="row"
+        >
+          <label :for="`input-${parameter}`">{{ parameter }}</label>
+          <input
+            type="text"
+            :id="`input-${parameter}`"
+            class="input-field"
+            v-model="parameters.SearchFor[parameter]"
+            @change="updateUsername"
+          />
+        </span>
 
-      <button
-        class="my-super-cool-btn"
-        @click="onStartButtonClick"
-        :disabled="username.length == 0"
-      >
-        <span>Run</span>
-      </button>
-    </div>
+        <button
+          class="my-super-cool-btn"
+          @click="onStartButtonClick"
+          :disabled="username.length == 0"
+        >
+          <span>Run</span>
+        </button>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
+import { API } from '@/api'
 import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { loadState, SearchParameters } from '@/common'
@@ -43,13 +46,15 @@ let stateKey = 'query-state'
 const state = loadState(stateKey)
 const username = ref(state.name)
 
+let strat = ref(props.strategy)
 let parameters = ref<SearchParameters>(new SearchParameters())
 
 onMounted(() => {})
 
 watch(
   () => props.strategy,
-  (newValue, oledValue) => {
+  (newValue, oldValue) => {
+    strat.value = newValue
     parameters.value = new SearchParameters()
   }
 )
@@ -64,12 +69,26 @@ function updateState(newState: Partial<State>): void {
   localStorage.setItem(stateKey, JSON.stringify(updatedState))
 }
 
-function start() {
+function goToDashboard() {
   router.push({ path: '/dashboard' })
 }
 
 function onStartButtonClick() {
-  start()
+  runStrategy({ name: strat.value.name, parameters: parameters })
+  // start()
+}
+
+function runStrategy(strategy: { name: string; parameters: SearchParameters }) {
+  console.log(parameters.value.SearchFor)
+  API.getEndpoints('strategy')!.get('runStrategy')!({
+    name: strategy.name,
+    parameters: strategy.parameters.value.SearchFor
+  }).then(function (response: any) {
+    console.log('Get run strategy response', response)
+    if (response.data.success) {
+      goToDashboard()
+    }
+  })
 }
 </script>
 

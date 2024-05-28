@@ -71,14 +71,14 @@ export class AppAPI {
     //   })
     // )
 
-    handlers.set('getAll', (id: any, config = { headers: authHeader() }) =>
-      axios.get(`${resourceURL}/api/v1/resource`, config).catch(function (error: any) {
-        console.log(`[Api.js - getById - ${resourceURL}] Error: `, error.response)
+    handlers.set('getAll', (config = { headers: authHeader() }) =>
+      axios.get(`${resourceURL}`, config).catch(function (error: any) {
+        console.log(`[Api.js - getAll - ${resourceURL}] Error: `, error.response)
       })
     )
 
-    handlers.set('runStrategy', (credentials, config = { headers: authHeader() }) =>
-      axios.post(`${resourceURL}/strategy`, credentials, config)
+    handlers.set('runStrategy', (strategy, config = { headers: authHeader() }) =>
+      axios.post(`${resourceURL}`, strategy, config)
     )
 
     return handlers
@@ -90,7 +90,9 @@ export class AppAPI {
 }
 
 // let API = new AppAPI(process.env.VUE_APP_API_URL)
-const API = new AppAPI('http://127.0.0.1:8080')
+// const API = new AppAPI('http://127.0.0.1:8080')
+
+const API = new AppAPI('http://127.0.0.1:8667/api')
 API.createEntity({ name: ENDPOINT_STRATEGY })
 
 export { API }
