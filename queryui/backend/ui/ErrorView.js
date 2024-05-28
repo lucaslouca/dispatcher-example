@@ -1,0 +1,1 @@
+import{_ as o,c as a,e as c,q as s,s as t,f as _}from"./index.js";const d={},r=e=>(s("data-v-a7db82aa"),e=e(),t(),e),n={id:"container"},i=r(()=>_("div",{id:"center-cell"},"Ooops!",-1)),p=[i];function l(e,f){return a(),c("div",n,p)}const u=o(d,[["render",l],["__scopeId","data-v-a7db82aa"]]);export{u as default};

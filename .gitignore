@@ -42,3 +42,6 @@ examples
 
 # Python
 __pycache__
+
+# Node.js
+node_modules
