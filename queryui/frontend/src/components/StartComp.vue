@@ -80,7 +80,7 @@ function onStartButtonClick() {
 
 function runStrategy(strategy: { name: string; parameters: SearchParameters }) {
   console.log(parameters.value.SearchFor)
-  API.getEndpoints('strategy')!.get('runStrategy')!({
+  API.getEndpoints('strategy')!.get('create')!({
     name: strategy.name,
     parameters: strategy.parameters.value.SearchFor
   }).then(function (response: any) {

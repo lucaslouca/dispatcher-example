@@ -2,6 +2,7 @@ import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 
 const ENDPOINT_STRATEGY: string = 'strategy'
+const ENDPOINT_FAVORITE: string = 'favorite'
 
 type Handler<T = unknown> = (event: T) => Promise<void | AxiosResponse<any, any>>
 
@@ -64,21 +65,28 @@ export class AppAPI {
 
     const resourceURL = `${this.#url}/${entity.name}`
 
-    // const resourceURL = `${this.#url}`
-    // handlers.set('getById', (id: any, config = { headers: authHeader() }) =>
-    //   axios.get(`${resourceURL}/api/v1/resource`, config).catch(function (error: any) {
-    //     console.log(`[Api.js - getById - ${resourceURL}] Error: `, error.response)
-    //   })
-    // )
-
     handlers.set('getAll', (config = { headers: authHeader() }) =>
       axios.get(`${resourceURL}`, config).catch(function (error: any) {
         console.log(`[Api.js - getAll - ${resourceURL}] Error: `, error.response)
       })
     )
 
-    handlers.set('runStrategy', (strategy, config = { headers: authHeader() }) =>
+    handlers.set('getById', (id: any, config = { headers: authHeader() }) =>
+      axios.get(`${resourceURL}/${id}`, config).catch(function (error: any) {
+        console.log(`[Api.js - getById - ${resourceURL}/${id}] Error: `, error.response)
+      })
+    )
+
+    handlers.set('create', (strategy, config = { headers: authHeader() }) =>
       axios.post(`${resourceURL}`, strategy, config)
+    )
+
+    handlers.set('update', (strategy, config = { headers: authHeader() }) =>
+      axios.put(`${resourceURL}`, strategy, config)
+    )
+
+    handlers.set('delete', (id: any, config = { headers: authHeader() }) =>
+      axios.delete(`${resourceURL}/${id}`, config)
     )
 
     return handlers
@@ -94,5 +102,6 @@ export class AppAPI {
 
 const API = new AppAPI('http://127.0.0.1:8667/api')
 API.createEntity({ name: ENDPOINT_STRATEGY })
+API.createEntity({ name: ENDPOINT_FAVORITE })
 
 export { API }

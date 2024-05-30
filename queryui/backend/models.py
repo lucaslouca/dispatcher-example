@@ -4,11 +4,10 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
-class Edge(db.Model):
+class Favorite(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    from_id = db.Column(db.String(50))
-    to_id = db.Column(db.String(50))
-    context = db.Column(db.String(50))
+    strategy_name = db.Column(db.String(50))
+    parameters_json = db.Column(db.String(500))
 
     def __repr__(self):
-        return f'Edge <{self.from_id} ={self.context}=> {self.to_id}>'
+        return f'Favorite <name={self.strategy_name} parameters_json={self.parameters_json}>'
