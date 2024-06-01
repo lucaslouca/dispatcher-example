@@ -24,7 +24,7 @@ def get_all():
     })
     strategies.append({
         'name': 'Geofencing',
-        'description': 'Lorem Ipsum Dolor.',
+        'description': 'Find all active mobile devices within a particular geo-fence area.',
         'icon': 'earth',
         'parameters': ['latitude', 'longitude', 'radius']
     })
