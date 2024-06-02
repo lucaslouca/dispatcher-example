@@ -108,3 +108,5 @@ int Threadpool::Size() const
     rlock lock(m_mutex);
     return m_workers.size();
 }
+
+Threadpool::~Threadpool() {}

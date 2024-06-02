@@ -121,6 +121,8 @@
     "__verbose_abort": "cpp",
     "coroutine": "cpp",
     "*.in": "c",
-    "span": "cpp"
+    "span": "cpp",
+    "shared_mutex": "cpp",
+    "execution": "cpp"
   }
 }

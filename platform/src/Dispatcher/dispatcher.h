@@ -5,8 +5,10 @@
 #include <cstdio>
 #include <utility>
 #include <Python.h>
+#include <thread>
 #include "lf_queue.h"
 #include "Playground.h"
+#include "thread_pool.h"
 #include "../Common/thread_utils.h"
 #include "../Logging/logging.h"
 #include "../Strategies/strategy_factory.h"
@@ -35,8 +37,14 @@ public:
 
                 Logging::INFO("Dispatching " + query_name, "Dispatcher");
 
-                std::unique_ptr<Strategy> strategy = StrategyFactory::GetInstance("python");
-                strategy->Run(query_name, parameters);
+                Strategy *strategy = StrategyFactory::GetInstance("python");
+
+                auto task = [strategy, query_name](std::unordered_map<std::string, std::string> params)
+                {
+                    strategy->Run(query_name, params);
+                };
+
+                m_tpool.Async(task, parameters);
             }
 
             using namespace std::literals::chrono_literals;
@@ -52,6 +60,7 @@ public:
     {
         m_thread = CreateAndStartThread(-1, "Dispatcher", [this]()
                                         { FlushQueue(); });
+        m_tpool.Init(std::thread::hardware_concurrency());
     }
 
     ~Dispatcher()
@@ -83,4 +92,5 @@ private:
     std::atomic<bool> m_running = {true};
     std::thread *m_thread = nullptr;
     std::string m_name;
+    Threadpool m_tpool;
 };

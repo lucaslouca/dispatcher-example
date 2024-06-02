@@ -15,15 +15,15 @@
     StrategyRegister<TYPE_NAME> TYPE_NAME::reg(#CONFIG_NAME)
 
 template <typename T>
-std::unique_ptr<Strategy> CreateT()
+Strategy *CreateT()
 {
-    return std::make_unique<T>();
+    return new T();
 }
 
 struct StrategyFactory
 {
     template <typename T>
-    using MFP = std::unique_ptr<T> (*)();
+    using MFP = T *(*)();
     using map_type = std::map<std::string, MFP<Strategy>>;
 
 private:
@@ -41,7 +41,7 @@ protected:
     }
 
 public:
-    static std::unique_ptr<Strategy> GetInstance(const std::string &s)
+    static Strategy *GetInstance(const std::string &s)
     {
         map_type::iterator it = GetMap()->find(s);
         if (it == GetMap()->end())

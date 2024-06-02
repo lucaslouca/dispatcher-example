@@ -4,7 +4,6 @@
 #include <atomic>
 #include <thread>
 #include <unistd.h>
-
 #include <sys/syscall.h>
 
 template <typename T, typename... A>
