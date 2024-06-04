@@ -21,9 +21,6 @@ class Dispatcher final
 public:
     void FlushQueue() noexcept
     {
-        PyImport_AppendInittab("Playground", PyInit_Playground);
-        Py_Initialize();
-        PyImport_ImportModule("Playground");
 
         while (m_running)
         {
@@ -44,23 +41,23 @@ public:
                     strategy->Run(query_name, params);
                 };
 
-                m_tpool.Async(task, parameters);
+                m_tpool.Submit(task, parameters);
             }
 
             using namespace std::literals::chrono_literals;
             std::this_thread::sleep_for(10ms);
         }
 
-        Py_Finalize();
-
         std::cout << "Dispatcher beak" << std::endl;
     }
 
     Dispatcher(const std::string name) : m_name(name), m_queue(DISPATCHER_QUEUE_SIZE)
     {
+        PyImport_AppendInittab("Playground", PyInit_Playground);
+        Py_Initialize();
+        PyImport_ImportModule("Playground");
         m_thread = CreateAndStartThread(-1, "Dispatcher", [this]()
                                         { FlushQueue(); });
-        m_tpool.Init(std::thread::hardware_concurrency());
     }
 
     ~Dispatcher()
@@ -73,6 +70,7 @@ public:
         }
         m_running = false;
         m_thread->join();
+        Py_Finalize();
     }
 
     auto Dispatch(const std::string &name, const std::unordered_map<std::string, std::string> &params) noexcept
@@ -92,5 +90,5 @@ private:
     std::atomic<bool> m_running = {true};
     std::thread *m_thread = nullptr;
     std::string m_name;
-    Threadpool m_tpool;
+    ThreadPool m_tpool;
 };

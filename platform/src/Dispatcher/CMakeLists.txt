@@ -5,7 +5,6 @@ add_library(Dispatcher
     "lf_queue.h"
     "tasks_queue.h"
     "thread_pool.h"
-    "thread_pool.cpp"
     )
 
 find_package(Cython REQUIRED)

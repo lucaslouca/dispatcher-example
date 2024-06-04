@@ -1,5 +1,8 @@
 from typing import Dict
 
-def run_query(query_name: str, parameters: Dict[str, str]) -> str:
-    print(f"In Python: {parameters}")
-    return "ok"
+from strategy_finder import find_and_run_strategy
+def run_query(strategy_name: str, parameters: Dict[str, str]) -> bool:
+    if (find_and_run_strategy(strategy_name, parameters)):
+        return "ok"
+    else:
+        return "fail"

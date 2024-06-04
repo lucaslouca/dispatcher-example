@@ -23,7 +23,9 @@ public:
 
     void Run(const std::string &query, const std::unordered_map<std::string, std::string> &parameters) const override;
 
-    virtual ~PythonStrategy() {}
+    virtual ~PythonStrategy()
+    {
+    }
 };
 
 #endif

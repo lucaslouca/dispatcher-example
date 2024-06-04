@@ -22,5 +22,5 @@ void PythonStrategy::Run(const std::string &query, const std::unordered_map<std:
 
     char *pResult = call_hello_world(query.c_str(), pParameters);
 
-    Logging::INFO("Result from Python call: " + std::string(pResult), "Main");
+    Logging::INFO("Result from Python call: " + std::string(pResult), "PythonStrategy");
 }
