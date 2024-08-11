@@ -10,7 +10,6 @@ add_library(Dispatcher
 find_package(Cython REQUIRED)
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-
 target_include_directories(Dispatcher
     PUBLIC
         $<INSTALL_INTERFACE:${PYTHON_APP_NAME}.h>

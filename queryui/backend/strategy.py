@@ -11,53 +11,66 @@ strategy_api = Blueprint('strategy_api', __name__)
 def get_all():
     strategies = []
     strategies.append({
-        'name': 'Agent',
+        'name': 'Parameters',
         'description': 'Lorem Ipsum Dolor. Lorem Ipsum Dolor.',
         'icon': 'user-secret',
         'parameters': ['username']
     })
     strategies.append({
-        'name': 'User',
-        'description': 'Lorem Ipsum Dolor.',
-        'icon': 'ship',
-        'parameters': ['username', 'location']
+        'name': 'Repeated',
+        'description': 'Lorem Ipsum Dolor. Lorem Ipsum Dolor.',
+        'icon': 'plus-minus',
+        'parameters': ['location'],
+        'repeated': ['username', 'age']
     })
     strategies.append({
-        'name': 'Geofencing',
-        'description': 'Find all active mobile devices within a particular geo-fence area.',
-        'icon': 'earth',
-        'parameters': ['latitude', 'longitude', 'radius']
+        'name': 'CSV',
+        'description': 'Lorem Ipsum Dolor. Lorem Ipsum Dolor.',
+        'icon': 'file-csv',
+        'input': 'csv'
     })
-    strategies.append({
-        'name': 'Search',
-        'description': 'Lorem Ipsum Dolor.',
-        'icon': 'eye',
-        'parameters': ['username']
-    })
-    strategies.append({
-        'name': 'Cycle',
-        'description': 'Lorem Ipsum Dolor.',
-        'icon': 'bullseye',
-        'parameters': ['username']
-    })
-    strategies.append({
-        'name': 'Globe Search',
-        'description': 'Lorem Ipsum Dolor.',
-        'icon': 'route',
-        'parameters': ['username']
-    })
-    strategies.append({
-        'name': 'Locate',
-        'description': 'Lorem Ipsum Dolor.',
-        'icon': 'map',
-        'parameters': ['username']
-    })
-    strategies.append({
-        'name': 'Shoot',
-        'description': 'Lorem Ipsum Dolor.',
-        'icon': 'crosshairs',
-        'parameters': ['username']
-    })
+    # strategies.append({
+    #     'name': 'User',
+    #     'description': 'Lorem Ipsum Dolor.',
+    #     'icon': 'ship',
+    #     'parameters': ['username', 'location']
+    # })
+    # strategies.append({
+    #     'name': 'Geofencing',
+    #     'description': 'Find all active mobile devices within a particular geo-fence area.',
+    #     'icon': 'earth',
+    #     'parameters': ['latitude', 'longitude', 'radius']
+    # })
+    # strategies.append({
+    #     'name': 'Search',
+    #     'description': 'Lorem Ipsum Dolor.',
+    #     'icon': 'eye',
+    #     'parameters': ['username']
+    # })
+    # strategies.append({
+    #     'name': 'Cycle',
+    #     'description': 'Lorem Ipsum Dolor.',
+    #     'icon': 'bullseye',
+    #     'parameters': ['username']
+    # })
+    # strategies.append({
+    #     'name': 'Globe Search',
+    #     'description': 'Lorem Ipsum Dolor.',
+    #     'icon': 'route',
+    #     'parameters': ['username']
+    # })
+    # strategies.append({
+    #     'name': 'Locate',
+    #     'description': 'Lorem Ipsum Dolor.',
+    #     'icon': 'map',
+    #     'parameters': ['username']
+    # })
+    # strategies.append({
+    #     'name': 'Shoot',
+    #     'description': 'Lorem Ipsum Dolor.',
+    #     'icon': 'crosshairs',
+    #     'parameters': ['username']
+    # })
 
     return jsonify({'result': strategies})
 

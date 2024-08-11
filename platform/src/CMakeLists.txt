@@ -28,6 +28,12 @@ add_subdirectory(Common)
 target_link_libraries(${PROJECT_NAME} PUBLIC Common)
 
 #########################################################
+# API
+#########################################################
+add_subdirectory(Api)
+target_link_libraries(${PROJECT_NAME} PUBLIC Api)
+
+#########################################################
 # Logging
 #########################################################
 add_subdirectory(Logging)

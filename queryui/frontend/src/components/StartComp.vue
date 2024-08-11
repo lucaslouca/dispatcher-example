@@ -3,20 +3,61 @@
     <template v-if="strat">
       <h2>{{ strategy.name }}</h2>
       <div class="query-box">
-        <span
-          v-for="(parameter, index) in strategy.parameters"
-          v-bind:key="`row-${index}`"
-          class="row"
-        >
-          <label :for="`input-${parameter}`">{{ parameter }}</label>
-          <input
-            type="text"
-            :id="`input-${parameter}`"
-            class="input-field"
-            v-model="parameters.SearchFor[parameter]"
-            @change="updateUsername"
-          />
-        </span>
+        <template v-if="!strategy.input">
+          <!-- Simple Parameters -->
+          <span
+            v-for="(parameter, index) in strategy.parameters"
+            v-bind:key="`row-${index}`"
+            class="row"
+          >
+            <label :for="`input-${parameter}`">{{ parameter }}</label>
+            <input
+              type="text"
+              :id="`input-${parameter}`"
+              class="input-field"
+              v-model="parameters.SearchFor[parameter]"
+              @change="updateUsername"
+            />
+          </span>
+
+          <!-- Repeated 
+        'repeated': ['username', 'age'] 
+        -->
+          <section
+            v-for="[key, values] in repeatedParameters"
+            v-bind:key="`section-${key}`"
+            class="repeated-section"
+          >
+            <section
+              class="row repeated"
+              v-for="(parameterValue, index) in values"
+              v-bind:key="`section-row-${key}-${index}`"
+            >
+              <label :for="`input-${key}`">{{ key }} {{ index }}</label>
+              <input
+                type="text"
+                :id="`repeated-input-${key}`"
+                class="input-field"
+                v-model="values[index]"
+                @change="updateUsername"
+              />
+
+              <button @click="removeRepeatedField(key, index)">
+                <font-awesome-icon icon="fa-solid fa-minus" />
+              </button>
+            </section>
+            <button @click="addRepeatedField(key)">
+              <font-awesome-icon icon="fa-solid fa-plus" />
+            </button>
+          </section>
+        </template>
+        <!-- CSV 
+        'input': 'csv' 
+        -->
+        <section v-if="strategy.input == 'csv'">
+          <input type="file" id="fileinput" @change="readCsvFile" />
+          {{ csvJson }}
+        </section>
 
         <button
           class="my-super-cool-btn"
@@ -48,16 +89,105 @@ const username = ref(state.name)
 
 let strat = ref(props.strategy)
 let parameters = ref<SearchParameters>(new SearchParameters())
+let repeatedParameters = ref<Map<string, Array<string>>>(new Map<string, Array<string>>())
+let csvJson = ref<string>('')
 
-onMounted(() => {})
+onMounted(() => {
+  resetRepeatedParameters()
+})
 
 watch(
   () => props.strategy,
   (newValue, oldValue) => {
     strat.value = newValue
     parameters.value = new SearchParameters()
+
+    resetRepeatedParameters()
   }
 )
+/********************************/
+/* REPEATED FIELDS */
+/********************************/
+function addRepeatedField(fieldName: string) {
+  repeatedParameters.value.get(fieldName)?.push('new ' + fieldName)
+}
+
+function removeRepeatedField(fieldName: string, index: number) {
+  console.log('Remove ' + fieldName + ' at index ' + index)
+  repeatedParameters.value.get(fieldName)?.splice(index, 1) // 2nd parameter means remove one item only
+}
+
+function resetRepeatedParameters() {
+  repeatedParameters.value = new Map<string, Array<string>>()
+  if (strat.value.repeated) {
+    strat.value.repeated.forEach((rp, i) => {
+      repeatedParameters.value.set(rp, ['test'])
+    })
+  }
+}
+
+/********************************/
+
+/********************************/
+/* INPUT: CSV */
+/********************************/
+function readCsvFile(evt) {
+  var f = evt.target.files[0]
+  if (f) {
+    var r = new FileReader()
+    r.onload = function (e) {
+      var contents = e.target.result
+      // csvJson.value = csvJSON(contents)
+
+      var lines = contents.split('\n')
+
+      repeatedParameters.value = new Map<string, Array<string>>()
+      let header = lines[0].split(';')
+      for (var i = 0; i < header.length; i++) {
+        repeatedParameters.value.set(header[i], [])
+      }
+
+      for (var l = 1; l < lines.length; l++) {
+        let currentLine = lines[l].split(';')
+        for (var c = 0; c < currentLine.length; c++) {
+          repeatedParameters.value.get(header[c])?.push(currentLine[c])
+        }
+      }
+      console.log(repeatedParameters.value)
+    }
+    r.readAsText(f)
+  } else {
+    alert('Failed to load file')
+  }
+}
+
+//var csv is the CSV file with headers
+function csvJSON(csv: any) {
+  var lines = csv.split('\n')
+
+  var result = []
+
+  // NOTE: If your columns contain commas in their values, you'll need
+  // to deal with those before doing the next step
+  // (you might convert them to &&& or something, then covert them back later)
+  // jsfiddle showing the issue https://jsfiddle.net/
+  var headers = lines[0].split(',')
+
+  for (var i = 1; i < lines.length; i++) {
+    var obj = {}
+    var currentline = lines[i].split(',')
+
+    for (var j = 0; j < headers.length; j++) {
+      obj[headers[j]] = currentline[j]
+    }
+
+    result.push(obj)
+  }
+
+  //return result; //JavaScript object
+  return JSON.stringify(result) //JSON
+}
+/********************************/
 
 function updateUsername() {
   updateState({ name: username.value })
@@ -79,11 +209,17 @@ function onStartButtonClick() {
 }
 
 function runStrategy(strategy: { name: string; parameters: SearchParameters }) {
-  console.log(parameters.value.SearchFor)
-  API.getEndpoints('strategy')!.get('create')!({
+  let data = {
     name: strategy.name,
     parameters: strategy.parameters.value.SearchFor
-  }).then(function (response: any) {
+  }
+
+  if (strat.value.repeated || (strat.value.input && strat.value.input === 'csv')) {
+    const mapToObject = (map) => Object.fromEntries(map.entries())
+    data['repeated'] = mapToObject(repeatedParameters.value)
+  }
+
+  API.getEndpoints('strategy')!.get('create')!(data).then(function (response: any) {
     console.log('Get run strategy response', response)
     if (response.data.success) {
       goToDashboard()
@@ -129,9 +265,20 @@ input.input-field:focus {
   grid-template-columns: auto;
 }
 
+.query-box .repeated-section {
+  padding-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-top: 1px #c7c7c7 solid;
+}
 .query-box .row {
   display: grid;
   grid-template-columns: 40% auto;
+  align-items: center;
+}
+
+.query-box .row.repeated {
+  display: grid;
+  grid-template-columns: 40% 1fr 30px;
   align-items: center;
 }
 
