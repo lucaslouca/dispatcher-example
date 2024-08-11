@@ -19,7 +19,7 @@ Api::Api()
                                     { Run(); });
 }
 
-void handle_request(
+void HandleRequest(
     web::http::http_request request,
     std::function<void(web::json::value const &, web::json::value &)> action)
 {
@@ -47,9 +47,9 @@ void handle_request(
     request.reply(web::http::status_codes::OK, answer);
 }
 
-void handle_post(web::http::http_request request)
+void HandlePost(web::http::http_request request)
 {
-    handle_request(
+    HandleRequest(
         request,
         [](web::json::value const &jvalue, web::json::value &answer)
         {
@@ -65,7 +65,7 @@ void Api::Run()
     */
     web::http::experimental::listener::http_listener listener("http://localhost:8080/api");
 
-    listener.support(web::http::methods::POST, handle_post);
+    listener.support(web::http::methods::POST, HandlePost);
 
     try
     {
