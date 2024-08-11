@@ -28,12 +28,6 @@ add_subdirectory(Common)
 target_link_libraries(${PROJECT_NAME} PUBLIC Common)
 
 #########################################################
-# API
-#########################################################
-add_subdirectory(Api)
-target_link_libraries(${PROJECT_NAME} PUBLIC Api)
-
-#########################################################
 # Logging
 #########################################################
 add_subdirectory(Logging)
@@ -58,6 +52,14 @@ target_link_libraries(${PROJECT_NAME} PUBLIC Strategies)
 add_subdirectory(Dispatcher)
 target_link_libraries(Dispatcher PRIVATE PythonFunctions)
 target_link_libraries(${PROJECT_NAME} PUBLIC Dispatcher)
+
+#########################################################
+# API
+#########################################################
+add_subdirectory(Api)
+target_link_libraries(Api PRIVATE PythonFunctions)
+target_link_libraries(Api PRIVATE Dispatcher)
+target_link_libraries(${PROJECT_NAME} PUBLIC Api)
 
 #########################################################
 # Add the binary tree to the search path for include 

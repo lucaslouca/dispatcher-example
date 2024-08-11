@@ -5,6 +5,7 @@ add_library(Api
     "api_builder.cpp"
     )
 
+
 find_package(cpprestsdk REQUIRED)
 find_library(CRYPTO_LIB NAMES crypto PATHS /opt/homebrew/lib/ /usr/local/lib/)
 

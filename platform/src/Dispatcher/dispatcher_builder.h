@@ -12,7 +12,7 @@ private:
 public:
     DispatcherBuilder();
     DispatcherBuilder &WithName(const std::string &name);
-    std::unique_ptr<Dispatcher> Build() const;
+    std::shared_ptr<Dispatcher> Build() const;
 };
 
 #endif

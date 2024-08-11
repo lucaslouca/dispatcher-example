@@ -13,9 +13,12 @@
 #include <string>
 #include <functional>
 
-Api::Api()
+Api::Api(const std::string &name, const std::string &host, const int port, std::shared_ptr<Dispatcher> dispatcher) : m_name(name),
+                                                                                                                     m_host(host),
+                                                                                                                     m_port(port),
+                                                                                                                     m_dispatcher(dispatcher)
 {
-    m_thread = CreateAndStartThread(-1, "Api", [this]()
+    m_thread = CreateAndStartThread(-1, m_name, [this]()
                                     { Run(); });
 }
 
@@ -63,7 +66,8 @@ void Api::Run()
     curl --header "Content-Type: application/json" --request POST --data '{"username":"xyz","password":"xyz"}' http://localhost:8080/api
 
     */
-    web::http::experimental::listener::http_listener listener("http://localhost:8080/api");
+    std::string listenAddress = m_host + ":" + std::to_string(m_port) + "/api";
+    web::http::experimental::listener::http_listener listener(listenAddress);
 
     listener.support(web::http::methods::POST, HandlePost);
 
@@ -71,8 +75,8 @@ void Api::Run()
     {
         listener
             .open()
-            .then([&listener]()
-                  { std::cout << "Started listening" << std::endl; })
+            .then([&listener, &listenAddress]()
+                  { std::cout << "Started listening on: " << listenAddress << std::endl; })
             .wait();
 
         while (m_running)

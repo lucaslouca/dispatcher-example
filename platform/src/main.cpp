@@ -12,7 +12,7 @@
 #include "Strategies/python_strategy.cpp"
 #include "Common/signal_channel.h"
 #include "Logging/logging.h"
-#include "Api/api.h"
+#include "Api/api_builder.h"
 
 /**
  * Create a return a shared channel for SIGINT signals.
@@ -119,14 +119,21 @@ int main(int argc, char *argv[])
      * DISPATCHER
      *
      *************************************************************************/
-    std::unique_ptr<Dispatcher> dispatcher = DispatcherBuilder().WithName("Dispatcher").Build();
+    std::shared_ptr<Dispatcher> dispatcher = DispatcherBuilder()
+                                                 .WithName("Dispatcher")
+                                                 .Build();
 
     /*************************************************************************
      *
      * API
      *
      *************************************************************************/
-    Api api;
+    std::unique_ptr<Api> api = ApiBuilder()
+                                   .WithName("Api")
+                                   .WithHost("http://localhost")
+                                   .WithPort(8080)
+                                   .WithDispatcher(dispatcher)
+                                   .Build();
 
     while (true)
     {
