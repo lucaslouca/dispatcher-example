@@ -137,9 +137,6 @@ int main(int argc, char *argv[])
 
     while (true)
     {
-        std::unordered_map<std::string, std::string> params = {{"key1", "value1"}, {"key2", "value2"}};
-        dispatcher->Dispatch("Location", params);
-
         using namespace std::literals::chrono_literals;
         std::this_thread::sleep_for(1s);
 

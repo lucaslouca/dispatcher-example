@@ -5,22 +5,11 @@
 
 REGISTER_DEF_TYPE(PythonStrategy, python);
 
-void PythonStrategy::Run(const std::string &query, const std::unordered_map<std::string, std::string> &parameters) const
+void PythonStrategy::Run(const std::string &query, const std::string &parameters) const
 {
     Logging::INFO("Running:" + query, "PythonStrategy");
 
-    PyObject *pParameters = PyDict_New();
-    for (const auto &[k, v] : parameters)
-    {
-        PyObject *key = PyUnicode_FromString(k.c_str());
-        PyObject *value = PyUnicode_FromString(v.c_str());
-        if (PyDict_SetItem(pParameters, key, value) < 0)
-        {
-            return;
-        }
-    }
-
-    char *pResult = call_hello_world(query.c_str(), pParameters);
+    char *pResult = call_do_work(query.c_str(), parameters.c_str());
 
     Logging::INFO("Result from Python call: " + std::string(pResult), "PythonStrategy");
 }

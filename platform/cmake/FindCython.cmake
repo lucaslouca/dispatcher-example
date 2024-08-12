@@ -24,7 +24,7 @@
 
 # Use the Cython executable that lives next to the Python executable
 # if it is a local installation.
-find_package(Python3 3.10.13 EXACT)
+find_package(Python3 ${PYTHON_VERSION} EXACT)
 if( Python3_FOUND )
   get_filename_component( _python_path ${Python3_EXECUTABLE} PATH )
   find_program( CYTHON_EXECUTABLE

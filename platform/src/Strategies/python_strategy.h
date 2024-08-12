@@ -21,7 +21,7 @@ private:
 public:
     PythonStrategy() {}
 
-    void Run(const std::string &query, const std::unordered_map<std::string, std::string> &parameters) const override;
+    void Run(const std::string &query, const std::string &parameters) const override;
 
     virtual ~PythonStrategy()
     {

@@ -5,7 +5,6 @@
 #include "../Common/thread_utils.h"
 
 #include <cpprest/json.h>
-#include <cpprest/http_listener.h>
 
 #include <iostream>
 #include <map>
@@ -50,26 +49,29 @@ void HandleRequest(
     request.reply(web::http::status_codes::OK, answer);
 }
 
-void HandlePost(web::http::http_request request)
+void Api::HandlePost(web::http::http_request request)
 {
     HandleRequest(
         request,
-        [](web::json::value const &jvalue, web::json::value &answer)
+        [this](web::json::value const &jvalue, web::json::value &answer)
         {
-            std::cout << jvalue.serialize() << std::endl;
+            Logging::INFO("Got json: " + jvalue.serialize(), m_name);
+            std::string strategy_name = jvalue.at(U("name")).as_string();
+            std::string parameters = jvalue.serialize();
+            m_dispatcher->Dispatch(strategy_name, parameters);
         });
 }
 
 void Api::Run()
 {
     /*
-    curl --header "Content-Type: application/json" --request POST --data '{"username":"xyz","password":"xyz"}' http://localhost:8080/api
+    curl --header "Content-Type: application/json" --request POST --data '{"name":"Location", "parameters": {"user":"fizzbuzzer", "caseId": "1", "term": "Lorem Ipsum"}, "forwards": [{"name": "Location", "parameters": [{"from": "loc", "to": "term"}]}]}' http://localhost:8080/api
 
     */
     std::string listenAddress = m_host + ":" + std::to_string(m_port) + "/api";
     web::http::experimental::listener::http_listener listener(listenAddress);
 
-    listener.support(web::http::methods::POST, HandlePost);
+    listener.support(web::http::methods::POST, std::bind(&Api::HandlePost, this, std::placeholders::_1));
 
     try
     {

@@ -20,7 +20,11 @@
 #include <cstdlib>
 #include <thread>
 #include <atomic>
+
+#pragma push_macro("U")
+#undef U
 #include <spdlog/spdlog.h>
+#pragma pop_macro("U")
 
 #include "safe_queue.h"
 
@@ -98,8 +102,8 @@ namespace Logging
 
     public:
         BaseLogger() = delete;
-        BaseLogger(const Config &){};
-        virtual ~BaseLogger(){};
+        BaseLogger(const Config &) {};
+        virtual ~BaseLogger() {};
         virtual void log(const std::string &, const Level, const std::string &name) {};
         virtual void log(const std::string &message, const Level level) {};
         virtual void log(const std::string &) {};

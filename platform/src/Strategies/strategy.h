@@ -7,8 +7,8 @@ class Strategy
 {
 
 public:
-    Strategy(){};
-    virtual void Run(const std::string &query, const std::unordered_map<std::string, std::string> &parameters) const = 0;
+    Strategy() {};
+    virtual void Run(const std::string &query, const std::string &parameters) const = 0;
     virtual ~Strategy() {}
 };
 

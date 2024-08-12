@@ -6,6 +6,7 @@
 #include <atomic>
 #include <thread>
 #include <memory>
+#include <cpprest/http_listener.h>
 
 class Api
 {
@@ -27,6 +28,8 @@ private:
     std::shared_ptr<Dispatcher> m_dispatcher;
     std::atomic<bool> m_running = {true};
     std::thread *m_thread = nullptr;
+
+    void HandlePost(web::http::http_request request);
 };
 
 #endif

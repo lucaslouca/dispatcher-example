@@ -45,3 +45,5 @@ __pycache__
 
 # Node.js
 node_modules
+
+.db

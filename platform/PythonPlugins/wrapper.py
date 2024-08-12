@@ -1,8 +1,5 @@
-from typing import Dict
+from typing import Dict, List
 
 from strategy_finder import find_and_run_strategy
-def run_query(strategy_name: str, parameters: Dict[str, str]) -> bool:
-    if (find_and_run_strategy(strategy_name, parameters)):
-        return "ok"
-    else:
-        return "fail"
+def do_work(strategy_name: str, parameters: str) -> tuple[bool, str]:
+    return find_and_run_strategy(strategy_name, parameters)

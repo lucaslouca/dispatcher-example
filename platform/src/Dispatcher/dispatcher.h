@@ -36,7 +36,7 @@ public:
 
                 Strategy *strategy = StrategyFactory::GetInstance("python");
 
-                auto task = [strategy, query_name](std::unordered_map<std::string, std::string> params)
+                auto task = [strategy, query_name](std::string params)
                 {
                     strategy->Run(query_name, params);
                 };
@@ -73,7 +73,7 @@ public:
         Py_Finalize();
     }
 
-    auto Dispatch(const std::string &name, const std::unordered_map<std::string, std::string> &params) noexcept
+    auto Dispatch(const std::string &name, std::string &params) noexcept
     {
         *(m_queue.GetNextToWriteTo()) = std::make_pair(name, params);
         m_queue.UpdateWriteIndex();
@@ -86,7 +86,7 @@ public:
     Dispatcher &operator=(const Dispatcher &&) = delete;
 
 private:
-    LFQueue<std::pair<std::string, std::unordered_map<std::string, std::string>>> m_queue;
+    LFQueue<std::pair<std::string, std::string>> m_queue;
     std::atomic<bool> m_running = {true};
     std::thread *m_thread = nullptr;
     std::string m_name;
