@@ -26,13 +26,10 @@ export default defineConfig(({ mode }) => ({
     preprocessorOptions: {
       scss: {
         additionalData: `
-          @import "@/scss/colors.scss";
-        `
+          @use "@/scss/colors" as *;
+        `,
+        api: 'modern-compiler'
       }
-    },
-    extract: {
-      filename: '[name].css',
-      chunkFilename: '[name].css'
     }
   }
 }))

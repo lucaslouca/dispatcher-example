@@ -25,12 +25,19 @@
 import { API } from '@/api'
 import { ref, onMounted, reactive } from 'vue'
 import StartComp from '@/components/StartComp.vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const strategies: Array<any> = reactive([] as Array<any>)
 const selectedStrategy = ref(null)
 
+const router = useRouter()
+const route = useRoute()
+
 onMounted(() => {
   getStrategies()
+
+  //   router.replace({name: 'home',query: { strategy: 'location', token: route.query.token }})
+  console.log(route.query.strategy)
 })
 
 function getStrategies() {
@@ -55,7 +62,7 @@ function selectStrategy(strategy: any) {
 </script>
 
 <style lang="scss" scoped>
-@import '../scss/tooltip.scss';
+@use '../scss/tooltip' as *;
 
 * {
   font-family: 'Product Sans', sans-serif;

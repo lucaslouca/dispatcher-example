@@ -78,8 +78,20 @@ import { useRouter } from 'vue-router'
 import { loadState, SearchParameters } from '@/common'
 import type { State } from '@/common'
 
+interface Strategy {
+  name: string
+  input?: string
+  parameters?: string[]
+  repeated?: string[]
+}
+
+interface StrategyRequest {
+  name: string
+  parameters: Record<string, string | Record<string, string[]>>
+}
+
 const props = defineProps<{
-  strategy: object
+  strategy: Strategy
 }>()
 
 const router = useRouter()
@@ -87,7 +99,7 @@ let stateKey = 'query-state'
 const state = loadState(stateKey)
 const username = ref(state.name)
 
-let strat = ref(props.strategy)
+let strat = ref<Strategy>(props.strategy)
 let parameters = ref<SearchParameters>(new SearchParameters())
 let repeatedParameters = ref<Map<string, Array<string>>>(new Map<string, Array<string>>())
 let csvJson = ref<string>('')
@@ -98,7 +110,7 @@ onMounted(() => {
 
 watch(
   () => props.strategy,
-  (newValue, oldValue) => {
+  (newValue: Strategy) => {
     strat.value = newValue
     parameters.value = new SearchParameters()
 
@@ -120,7 +132,7 @@ function removeRepeatedField(fieldName: string, index: number) {
 function resetRepeatedParameters() {
   repeatedParameters.value = new Map<string, Array<string>>()
   if (strat.value.repeated) {
-    strat.value.repeated.forEach((rp, i) => {
+    strat.value.repeated.forEach((rp: string) => {
       repeatedParameters.value.set(rp, ['test'])
     })
   }
@@ -131,25 +143,30 @@ function resetRepeatedParameters() {
 /********************************/
 /* INPUT: CSV */
 /********************************/
-function readCsvFile(evt) {
-  var f = evt.target.files[0]
+function readCsvFile(evt: Event) {
+  const target = evt.target as HTMLInputElement
+  const f = target.files?.[0]
   if (f) {
-    var r = new FileReader()
-    r.onload = function (e) {
-      var contents = e.target.result
+    const r = new FileReader()
+    r.onload = function (e: ProgressEvent<FileReader>) {
+      const contents = e.target?.result
+      if (typeof contents !== 'string') {
+        console.error('File contents is not a string')
+        return
+      }
       // csvJson.value = csvJSON(contents)
 
-      var lines = contents.split('\n')
+      const lines = contents.split('\n')
 
       repeatedParameters.value = new Map<string, Array<string>>()
-      let header = lines[0].split(';')
-      for (var i = 0; i < header.length; i++) {
+      const header = lines[0].split(';')
+      for (let i = 0; i < header.length; i++) {
         repeatedParameters.value.set(header[i], [])
       }
 
-      for (var l = 1; l < lines.length; l++) {
-        let currentLine = lines[l].split(';')
-        for (var c = 0; c < currentLine.length; c++) {
+      for (let l = 1; l < lines.length; l++) {
+        const currentLine = lines[l].split(';')
+        for (let c = 0; c < currentLine.length; c++) {
           repeatedParameters.value.get(header[c])?.push(currentLine[c])
         }
       }
@@ -162,22 +179,22 @@ function readCsvFile(evt) {
 }
 
 //var csv is the CSV file with headers
-function csvJSON(csv: any) {
-  var lines = csv.split('\n')
+function csvJSON(csv: string) {
+  const lines = csv.split('\n')
 
-  var result = []
+  const result: Array<Record<string, string>> = []
 
   // NOTE: If your columns contain commas in their values, you'll need
   // to deal with those before doing the next step
   // (you might convert them to &&& or something, then covert them back later)
   // jsfiddle showing the issue https://jsfiddle.net/
-  var headers = lines[0].split(',')
+  const headers = lines[0].split(',')
 
-  for (var i = 1; i < lines.length; i++) {
-    var obj = {}
-    var currentline = lines[i].split(',')
+  for (let i = 1; i < lines.length; i++) {
+    const obj: Record<string, string> = {}
+    const currentline = lines[i].split(',')
 
-    for (var j = 0; j < headers.length; j++) {
+    for (let j = 0; j < headers.length; j++) {
       obj[headers[j]] = currentline[j]
     }
 
@@ -204,19 +221,19 @@ function goToDashboard() {
 }
 
 function onStartButtonClick() {
-  runStrategy({ name: strat.value.name, parameters: parameters })
+  runStrategy({ name: strat.value.name, parameters: parameters.value })
   // start()
 }
 
 function runStrategy(strategy: { name: string; parameters: SearchParameters }) {
-  let data = {
+  const data: StrategyRequest = {
     name: strategy.name,
-    parameters: strategy.parameters.value.SearchFor
+    parameters: strategy.parameters.SearchFor
   }
 
   if (strat.value.repeated || (strat.value.input && strat.value.input === 'csv')) {
-    const mapToObject = (map) => Object.fromEntries(map.entries())
-    data['repeated'] = mapToObject(repeatedParameters.value)
+    const mapToObject = (map: Map<string, Array<string>>) => Object.fromEntries(map.entries())
+    data.parameters = { ...data.parameters, repeated: mapToObject(repeatedParameters.value) }
   }
 
   API.getEndpoints('strategy')!.get('create')!(data).then(function (response: any) {

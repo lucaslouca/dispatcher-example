@@ -3,7 +3,7 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-          <SpinnerComp :color="`red`" />
+          <SpinnerComp color="red" />
           <h1>{{ message }}.</h1>
         </div>
       </div>
@@ -14,9 +14,11 @@
 <script setup lang="ts">
 import SpinnerComp from '@/components/SpinnerComp.vue'
 
-const props = defineProps<{
+interface Props {
   message: string
-}>()
+}
+
+defineProps<Props>()
 </script>
 
 <style scoped>

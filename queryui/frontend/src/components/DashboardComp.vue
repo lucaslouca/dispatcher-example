@@ -77,7 +77,7 @@ function GETCaptures() {
 </script>
 
 <style lang="scss" scoped>
-@import '../scss/colors.scss';
+@use '../scss/colors' as *;
 
 #wrapper {
   -webkit-box-orient: vertical;

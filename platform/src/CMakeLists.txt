@@ -65,7 +65,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC Api)
 # Add the binary tree to the search path for include 
 # files so that we will find ${PROJECT_NAME}Config.h
 #########################################################
-find_package(Python3 ${PYTHON_VERSION} EXACT COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 ${PYTHON_VERSION} COMPONENTS Interpreter Development REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${Python3_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${Python3_LIBRARIES})
 

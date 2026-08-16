@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(MyApp VERSION 1.0)
 
-set(PYTHON_VERSION "3.10.13")
+set(PYTHON_VERSION "3")
 
 #########################################################
 # CMake Modules
